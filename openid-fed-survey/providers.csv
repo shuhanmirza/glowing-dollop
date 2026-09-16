@@ -1,0 +1,36 @@
+alias,issuer,notes
+google,https://accounts.google.com,Clean OIDC discovery; no federation
+microsoft,https://login.microsoftonline.com/common/v2.0,Issuer with a path (well-known appended after path)
+azure,https://login.microsoftonline.com/common/v2.0,Alias of microsoft
+azuread,https://login.microsoftonline.com/common/v2.0,Alias of microsoft
+apple,https://appleid.apple.com,Clean OIDC discovery
+salesforce,https://login.salesforce.com,Clean OIDC discovery
+paypal,https://www.paypal.com,Clean OIDC discovery
+yahoo,https://api.login.yahoo.com,Clean OIDC discovery
+facebook,https://www.facebook.com,Clean OIDC discovery
+linkedin,https://www.linkedin.com/oauth,Clean OIDC discovery
+spotify,https://accounts.spotify.com,Clean OIDC discovery
+twitch,https://id.twitch.tv/oauth2,Clean OIDC discovery
+line,https://access.line.me,Clean OIDC discovery
+kakao,https://kauth.kakao.com,Clean OIDC discovery
+adobe,https://ims-na1.adobelogin.com,Clean OIDC discovery
+atlassian,https://auth.atlassian.com,Clean OIDC discovery
+slack,https://slack.com,Clean OIDC discovery
+dropbox,https://www.dropbox.com,Clean OIDC discovery
+firefox,https://accounts.firefox.com,Mozilla accounts
+duende,https://demo.duendesoftware.com,IdentityServer public demo OP
+github,https://token.actions.githubusercontent.com,"GitHub Actions CI/CD OIDC (machine tokens, not user login); WebFinger 404"
+gitlab,https://gitlab.com,Also answers WebFinger (probe 1 returns a valid issuer JRD)
+okta,https://login.okta.com,Federation endpoint returns HTTP 200 HTML not a JWT; probe is not fooled
+zoom,https://zoom.us,No OIDC discovery at the root (verdict NOT SUPPORTED low confidence)
+hellocoop,https://issuer.hello.coop,"Hellō Coop consumer OIDC; clean discovery, no federation (webfinger + federation endpoint return 403)"
+spid,https://registry.spid.gov.it,OpenID Federation trust anchor (metadata: federation_entity)
+cie,https://oidc.registry.servizicie.interno.gov.it,Italian CIE electronic-ID trust anchor
+posteid,https://posteid.poste.it,SPID leaf OP (openid_provider + federation_entity; has authority_hints)
+cie_idp,https://oidc.idserver.servizicie.interno.gov.it,"CIE identity provider / OP (openid_provider + federation_entity); federation-native (no classic openid-configuration, discovery 404); chains to CIE trust anchor"
+gematik_fedmaster,https://app.ti-dienste.de,"gematik TI Federation Master (Germany healthcare sector federation trust anchor); often unreachable outside the German TI network"
+gematik_idp_dev,https://gsi.dev.gematik.solutions,"gematik sektoraler IDP reference/dev instance (Germany healthcare OpenID Federation IdP)"
+geant_oidcfed_ta,https://ta.oidcfed.incubator.geant.org,"GEANT OIDCfed incubator trust anchor (pan-European research and education federation)"
+swamid_oidc,https://oidc.swamid.se,"SWAMID OpenID Federation OP (Swedish academic identity federation)"
+eduid_se,https://login.idp.eduid.se,"Sweden eduID OpenID Provider (SUNET/SWAMID national research and education IdP)"
+eudi_ta,https://trust-anchor.eudiw.dev,"EU Digital Identity Wallet reference trust anchor (eIDAS 2.0 federation)"

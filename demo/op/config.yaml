@@ -1,0 +1,52 @@
+# Dex configuration for the demo OpenID Provider (op.localhost).
+#
+# A minimal, unmodified, standards OIDC provider used to demonstrate that the
+# BYOID wallet works against a real OP the project does not control. It hosts
+# two public PKCE clients (wallet + blind relay) and a single demo user at the abc.localhost namespace.
+#
+# The issuer is http://op.localhost:5556. Browsers resolve *.localhost to the
+# loopback address automatically (no /etc/hosts entry needed in Chrome), and
+# Chrome treats *.localhost as a secure context, so the extension may call it
+# over http. See demo/op/README.md.
+
+issuer: http://op.localhost:5556
+
+storage:
+  # In-memory storage: state is reseeded from this file on every restart, which
+  # is exactly what we want for a reproducible demo.
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+
+# Skip the approval screen so the demo login is just username/password.
+oauth2:
+  skipApprovalScreen: true
+
+staticClients:
+  - id: byoid-demo
+    name: BYOID Demo Wallet
+    # Public client (no secret): authenticates with PKCE, matching the wallet's
+    # public-client model. Dex allows localhost redirect URIs for public clients;
+    # the extension intercepts this loopback URL to capture the auth code.
+    public: true
+    redirectURIs:
+      - http://localhost:10001/login-callback
+
+  - id: byoid-relay-client
+    name: BYOID Blind Relay
+    # Public client (no secret) for the blind-relay flow. Its redirect URI
+    # is the relay's callback (relayoidc.localhost), not the wallet's. The relay
+    # forwards the code to the Verifier, which redeems it with PKCE (split-PKCE).
+    public: true
+    redirectURIs:
+      - http://relayoidc.localhost:9090/cb
+
+# Enable the built-in username/password database and seed one demo user in the
+# abc.localhost namespace. Password is "password123" (bcrypt hash below).
+enablePasswordDB: true
+staticPasswords:
+  - email: alice@abc.localhost
+    hash: "$2a$10$jd5D/wGUx1L3OwJpGdTOUOLDk5mrns3Y6vriWV/4e3OvWeigqjSkq"
+    username: alice
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"

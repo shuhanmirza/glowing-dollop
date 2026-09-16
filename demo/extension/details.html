@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Identity details</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="page">
+    <div class="local-bar">
+      <span class="local-bar-dot" aria-hidden="true"></span>
+      <span>Browser extension · running locally on your device</span>
+    </div>
+    <div class="card card-wide">
+      <div class="brand">🔑 PK Token Wallet</div>
+      <h1 id="title" class="title">Identity details</h1>
+      <p id="error" class="err" hidden></p>
+
+      <div id="content" hidden>
+        <!-- Summary chips -->
+        <div class="summary">
+          <span id="issuer" class="issuer"></span>
+          <span id="status" class="badge"></span>
+          <span id="provider" class="chip"></span>
+        </div>
+
+        <!-- ID token claims -->
+        <h2 class="section-title">ID token claims</h2>
+        <p class="section-note">
+          These are the claims the OpenID Provider signed — the identity
+          information asserted about the user.
+        </p>
+        <table class="claims"><tbody id="claims"></tbody></table>
+
+        <!-- PK Token structure -->
+        <h2 class="section-title">PK Token structure</h2>
+        <p class="section-note">
+          A PK Token is the OP-signed ID token plus a second signature by the
+          user's ephemeral key, which was committed inside the token's nonce.
+        </p>
+        <table class="claims"><tbody id="structure"></tbody></table>
+
+        <!-- Raw -->
+        <h2 class="section-title">Raw PK Token</h2>
+        <pre id="raw" class="raw"></pre>
+      </div>
+
+      <button id="close" class="button button-secondary" type="button">Close</button>
+    </div>
+    <script type="module" src="details.js"></script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+# Spins up the Bring-Your-Own-IdP demo.
+#
+#   docker compose up --build
+#   open http://localhost:5173     (the Verifier, "xyz.com")
+#
+# Services and where the browser reaches them (host):
+#   frontend  http://localhost:5173            the Verifier UI
+#   backend   http://localhost:11110           the Verifier API + OAuth callbacks
+#   op        http://op.localhost:5556         demo OpenID Provider (Dex)
+#   abc       http://abc.localhost:8081        demo namespace (landing + well-known)
+#   relay     http://relayoidc.localhost:9090  blind relay (landing + /cb relay)
+#
+# Browsers resolve *.localhost to loopback automatically. Inside the compose
+# network, the op/abc/relay service names are ALSO aliased to their *.localhost
+# hostnames, so the backend can fetch the byoid-configuration and reach the OP
+# by the exact same URLs the browser uses (and the ID token issuer matches).
+services:
+  # Demo OpenID Provider (Dex). Minimal, unmodified OIDC provider. See demo/op.
+  op:
+    image: ghcr.io/dexidp/dex:v2.41.1
+    command: ["dex", "serve", "/etc/dex/config.yaml"]
+    volumes:
+      - ./op/config.yaml:/etc/dex/config.yaml:ro
+    ports:
+      - "5556:5556"
+    networks:
+      default:
+        aliases: [op.localhost]
+
+  # Demo namespace domain. Serves a landing page and the discovery document at
+  # /.well-known/byoid-configuration. See demo/abc.
+  abc:
+    build: ./abc
+    ports:
+      - "8081:80"
+    networks:
+      default:
+        aliases: [abc.localhost]
+
+  # Blind relay. Owns the OP-registered redirect URI and relays the auth code to
+  # the Verifier; it never redeems the code (split-PKCE) so never sees the
+  # token. See demo/relay.
+  relay:
+    build: ./relay
+    environment:
+      - PORT=9090
+      # This relay's own origin (the expected audience of the signed routing
+      # state) and the hosts it may fetch verifier JWKS from despite them
+      # resolving to loopback (demo carve-out for the SSRF guard).
+      - RELAY_ORIGIN=http://relayoidc.localhost:9090
+      - VERIFIER_ALLOWED_HOSTS=xyz.localhost,localhost,127.0.0.1
+    ports:
+      - "9090:9090"
+    networks:
+      default:
+        aliases: [relayoidc.localhost]
+
+  backend:
+    build: ./verifier/backend
+    environment:
+      - PORT=11110
+      - FRONTEND_URL=http://localhost:5173
+      - BACKEND_PUBLIC_URL=http://localhost:11110
+      - GOOGLE_REDIRECT_URL=http://localhost:11110/login-callback
+      # The Verifier's public origin: the issuer of the signed routing state and
+      # the base the relay fetches /.well-known/byoid-verifier from. Must be a
+      # name the relay can resolve — hence the xyz.localhost network alias below.
+      - VERIFIER_ORIGIN=http://xyz.localhost:11110
+    ports:
+      - "11110:11110"
+    networks:
+      default:
+        aliases: [xyz.localhost]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:11110/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build: ./verifier/frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+networks:
+  default:

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PK Token Wallet</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="popup">
+    <div class="local-bar">
+      <span class="local-bar-dot" aria-hidden="true"></span>
+      <span>Browser extension · running locally</span>
+    </div>
+    <div class="brand">🔑 PK Token Wallet</div>
+
+    <button id="add" class="button" type="button">+ Add Identity ▾</button>
+    <div id="picker" hidden></div>
+
+    <ul id="list" class="list"></ul>
+    <p id="empty" class="muted" hidden>
+      No identities yet. Add one to mint a PK Token from an OpenID Provider.
+    </p>
+
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>

@@ -1,0 +1,3 @@
+# Place corporate / private root CA certificates here (PEM format, *.crt) to
+# have them trusted during the Docker build. Needed on networks that perform
+# TLS inspection.

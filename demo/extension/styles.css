@@ -1,0 +1,603 @@
+:root {
+  /* Dark, purple-accented "local wallet" identity -- deliberately distinct
+     from any website (e.g. the light/blue Verifier) so users can always tell
+     the wallet apart from the sites that talk to it. */
+  --bg: #10131a;
+  --card: #1a1f2b;
+  --text: #e6e9ef;
+  --muted: #8b93a7;
+  --border: #2b3242;
+  --accent: #7c4dff;
+  --accent-hover: #8a5eff;
+  --error: #ff6b6b;
+  --ok-bg: #14301e;
+  --ok-border: #285e3c;
+  --ok-text: #4ade80;
+  --warn-bg: #2e2410;
+  --warn-border: #6b5a1f;
+  --warn-text: #f5c451;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  color: var(--text);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Provider picker dropdown (shared: popup "+ Add Identity" and the login
+   consent page's "Add this identity"). Same experience in both places: click
+   the trigger, choose an OpenID Provider. */
+.op-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 8px 0 4px;
+  padding: 6px;
+  background: #12161f;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* A class rule setting `display` overrides the `hidden` attribute (author
+   styles beat the UA stylesheet), so restore hidden's effect explicitly.
+   Without this the dropdown is always visually open and the toggle does
+   nothing on screen. */
+.op-menu[hidden] {
+  display: none;
+}
+
+.op-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.op-option:hover {
+  background: #222838;
+  border-color: var(--accent);
+}
+
+.op-badge {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.op-badge-google {
+  background: #4285f4;
+}
+
+.op-badge-microsoft {
+  background: #00a4ef;
+}
+
+/* "Running locally" indicator shown on every wallet page, so the whole
+   extension shares one identity that no website can impersonate. */
+.local-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0d1017;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.local-bar-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #35c46b;
+  box-shadow: 0 0 0 3px rgba(53, 196, 107, 0.18);
+}
+
+/* ===================================================================
+   Local wallet dialog (auth.html)
+   Deliberately dark and chrome-framed so it looks nothing like a
+   website: the user must be able to tell this is their own wallet
+   running locally in the browser, not the site that is asking.
+   =================================================================== */
+.wallet-page {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #10131a;
+  background-image: radial-gradient(circle at 30% 0%, #1c2233 0%, #10131a 60%);
+  padding: 24px;
+}
+
+.wallet-dialog {
+  width: 100%;
+  max-width: 420px;
+  background: #1a1f2b;
+  border: 1px solid #2b3242;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  color: #e6e9ef;
+}
+
+.wallet-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0d1017;
+  border-bottom: 1px solid #2b3242;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #8b93a7;
+}
+
+.wallet-bar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #35c46b;
+  box-shadow: 0 0 0 3px rgba(53, 196, 107, 0.18);
+}
+
+.wallet-bar-text {
+  letter-spacing: 0.01em;
+}
+
+.wallet-body {
+  padding: 22px 22px 24px;
+}
+
+.wallet-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.wallet-logo-icon {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(139, 96, 255, 0.4));
+}
+
+.wallet-logo-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.wallet-logo-sub {
+  font-size: 12px;
+  color: #8b93a7;
+}
+
+.wallet-request {
+  background: #12161f;
+  border: 1px solid #2b3242;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.wallet-request-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b93a7;
+  margin-bottom: 4px;
+}
+
+.wallet-request-origin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  word-break: break-all;
+}
+
+.wallet-ask {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #e6e9ef;
+  margin: 0 0 16px;
+}
+
+.wallet-ask strong,
+.wallet-request-origin strong {
+  color: #b79bff;
+}
+
+.wallet-token {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #12161f;
+  border: 1px solid #2b3242;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.wallet-token-warn {
+  border-color: #6b5a1f;
+  background: #241f10;
+}
+
+.wallet-token-icon {
+  font-size: 18px;
+}
+
+.wallet-token-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.wallet-token-detail {
+  font-size: 12px;
+  color: #8b93a7;
+  word-break: break-all;
+}
+
+.wallet-note {
+  font-size: 12px;
+  color: #8b93a7;
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+
+.wallet-btn {
+  width: 100%;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.wallet-btn-primary {
+  color: #fff;
+  background: linear-gradient(180deg, #7c4dff 0%, #6b3fd4 100%);
+}
+
+.wallet-btn-primary:hover {
+  background: linear-gradient(180deg, #8a5eff 0%, #7546e0 100%);
+}
+
+.wallet-btn-ghost {
+  color: #c7cddb;
+  background: transparent;
+  border-color: #2b3242;
+}
+
+.wallet-btn-ghost:hover {
+  background: #12161f;
+}
+
+.wallet-status {
+  font-size: 14px;
+  color: #35c46b;
+  margin: 6px 0 0;
+}
+
+.wallet-err {
+  font-size: 13px;
+  color: #ff6b6b;
+  word-break: break-word;
+  margin: 6px 0 0;
+}
+
+/* Popup */
+.popup {
+  width: 320px;
+  margin: 0;
+  padding: 16px;
+  background: var(--bg);
+}
+
+/* Full-page (add identity, details): local-bar pill above a dark card. */
+.page {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: var(--bg);
+  background-image: radial-gradient(circle at 30% 0%, #1c2233 0%, #10131a 60%);
+  padding: 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+}
+
+.brand {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 12px;
+}
+
+.status {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.status-error {
+  color: var(--error);
+}
+
+.status-success {
+  color: var(--ok-text);
+  font-weight: 700;
+}
+
+.detail {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.detail p {
+  margin: 6px 0;
+}
+
+.err {
+  color: var(--error);
+  word-break: break-word;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Buttons */
+.button {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.button:hover {
+  background: var(--accent-hover);
+}
+
+.button-secondary {
+  margin-top: 16px;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.button-secondary:hover {
+  background: #f6f8fa;
+}
+
+/* Wallet list */
+.list {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+}
+
+.item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.item-email {
+  font-weight: 600;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.badge {
+  flex: none;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.badge-valid {
+  background: var(--ok-bg);
+  border-color: var(--ok-border);
+  color: var(--ok-text);
+}
+
+.badge-expired {
+  background: var(--warn-bg);
+  border-color: var(--warn-border);
+  color: var(--warn-text);
+}
+
+/* Issuer chip — deliberately distinct from the validity badge. */
+.issuer {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: #b7c6ff;
+  background: #1c2233;
+  border: 1px solid #2b3242;
+  border-radius: 6px;
+  padding: 3px 8px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.item-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.item-actions {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.link-danger {
+  color: var(--error);
+}
+
+/* Details page */
+.card-wide {
+  max-width: 680px;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.summary .issuer {
+  margin-top: 0;
+}
+
+.chip {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: #12161f;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 24px 0 4px;
+}
+
+.section-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.claims {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.claims tr {
+  border-bottom: 1px solid #232a38;
+}
+
+.claim-key {
+  padding: 6px 10px 6px 0;
+  font-weight: 600;
+  color: #b7becd;
+  white-space: pre;
+  vertical-align: top;
+  width: 40%;
+}
+
+.claim-val {
+  padding: 6px 0;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.claim-val.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  color: #9aa3b5;
+}
+
+.raw {
+  background: #10131a;
+  border: 1px solid var(--border);
+  color: #c7cddb;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 320px;
+  overflow-y: auto;
+}

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Identity</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- Go's WASM runtime glue. Defines the global `Go`. -->
+    <script src="wasm_exec.js"></script>
+  </head>
+  <body class="page">
+    <div class="local-bar">
+      <span class="local-bar-dot" aria-hidden="true"></span>
+      <span>Browser extension · running locally on your device</span>
+    </div>
+    <div class="card">
+      <div class="brand">🔑 PK Token Wallet</div>
+      <h1 class="title">Add identity</h1>
+      <p id="status" class="status">Starting…</p>
+      <div id="detail" class="detail"></div>
+      <button id="close" class="button button-secondary" type="button" hidden>
+        Close
+      </button>
+    </div>
+    <script type="module" src="add.js"></script>
+  </body>
+</html>

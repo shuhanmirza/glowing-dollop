@@ -1,0 +1,9 @@
+{
+  "byoid_version": "0.1",
+  "namespace": "abc.localhost",
+  "issuer": "http://op.localhost:5556",
+  "client_id": "byoid-relay-client",
+  "relay_redirect_uri": "http://relayoidc.localhost:9090/cb",
+  "scopes": "openid email profile",
+  "binding_mode": "split-pkce"
+}

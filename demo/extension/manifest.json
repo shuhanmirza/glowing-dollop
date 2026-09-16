@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "BYOID PK Token Wallet",
+  "version": "0.1.0",
+  "description": "Bring-Your-Own-IdP demo: an OpenPubkey client in the browser that mints and holds PK Tokens.",
+  "action": {
+    "default_title": "PK Token Wallet",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://localhost/*", "http://127.0.0.1/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage", "tabs", "webNavigation", "declarativeNetRequest"],
+  "host_permissions": [
+    "http://localhost:10001/*",
+    "http://op.localhost/*",
+    "https://login.microsoftonline.com/*",
+    "https://accounts.google.com/*",
+    "https://oauth2.googleapis.com/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "strip_origin_on_token",
+        "enabled": true,
+        "path": "rules.json"
+      }
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}

@@ -1,0 +1,7 @@
+# Do not commit local CA certificates. A root CA is not secret, but it is an
+# environment-specific artifact (your network's TLS-inspection root CA), not
+# project source. Keep the folder via .gitkeep so the Docker build's
+# `COPY certs/` step still works when no cert is present.
+*
+!.gitignore
+!.gitkeep

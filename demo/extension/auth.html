@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your identity wallet</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="wasm_exec.js"></script>
+  </head>
+  <!-- Deliberately styled to look nothing like a website: a dark, chrome-framed
+       local dialog, so the user can tell this is their own wallet running in
+       the browser, not the site that is asking. -->
+  <body class="wallet-page">
+    <div class="wallet-dialog">
+      <!-- Local-context bar: makes it unmistakable this is the extension. -->
+      <div class="wallet-bar">
+        <span class="wallet-bar-dot" aria-hidden="true"></span>
+        <span class="wallet-bar-text">Browser extension · running locally on your device</span>
+      </div>
+
+      <div class="wallet-body">
+        <div class="wallet-logo">
+          <span class="wallet-logo-icon" aria-hidden="true">🔑</span>
+          <div>
+            <div class="wallet-logo-name">PK Token Wallet</div>
+            <div class="wallet-logo-sub">Your local identity wallet</div>
+          </div>
+        </div>
+
+        <div id="prompt" hidden>
+          <!-- Who is asking (the website) — clearly a separate, remote party. -->
+          <div class="wallet-request">
+            <div class="wallet-request-label">Website requesting sign-in</div>
+            <div class="wallet-request-origin">
+              <span class="wallet-globe" aria-hidden="true">🌐</span>
+              <span id="origin"></span>
+            </div>
+          </div>
+
+          <p class="wallet-ask">
+            Prove you control <strong id="email"></strong> using a token from
+            your wallet?
+          </p>
+
+          <div class="wallet-token">
+            <span class="wallet-token-icon" aria-hidden="true">🎫</span>
+            <div>
+              <div class="wallet-token-title">PK Token</div>
+              <div id="tokdetail" class="wallet-token-detail"></div>
+            </div>
+          </div>
+
+          <p class="wallet-note">
+            Your private key never leaves this wallet. Only a one-time proof is
+            sent to the website.
+          </p>
+
+          <button id="approve" class="wallet-btn wallet-btn-primary" type="button">
+            Prove control &amp; continue
+          </button>
+          <button id="deny" class="wallet-btn wallet-btn-ghost" type="button">
+            Cancel
+          </button>
+        </div>
+
+        <div id="notoken" hidden>
+          <p class="wallet-ask">
+            You don't have a token for <strong id="email2"></strong> in this
+            wallet yet.
+          </p>
+          <p class="wallet-note">Add one, then return to the website to sign in.</p>
+          <button id="add" class="wallet-btn wallet-btn-primary" type="button">
+            Add this identity ▾
+          </button>
+          <div id="addMenu" hidden></div>
+          <button id="cancel" class="wallet-btn wallet-btn-ghost" type="button">
+            Cancel
+          </button>
+        </div>
+
+        <div id="expired" hidden>
+          <div class="wallet-token wallet-token-warn">
+            <span class="wallet-token-icon" aria-hidden="true">⌛</span>
+            <div>
+              <div class="wallet-token-title">Token expired</div>
+              <div id="expdetail" class="wallet-token-detail"></div>
+            </div>
+          </div>
+          <p class="wallet-ask">
+            Your token for <strong id="email3"></strong> has expired. Refresh it
+            by signing in again, then return to the website.
+          </p>
+          <button id="refresh" class="wallet-btn wallet-btn-primary" type="button">
+            Refresh token
+          </button>
+          <button id="cancel2" class="wallet-btn wallet-btn-ghost" type="button">
+            Cancel
+          </button>
+        </div>
+
+        <p id="status" class="wallet-status" hidden></p>
+        <p id="error" class="wallet-err" hidden></p>
+      </div>
+    </div>
+    <script type="module" src="auth.js"></script>
+  </body>
+</html>
